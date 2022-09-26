@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.ts",
+    "start:ts": "tsc -w",
+    "start:js": "nodemon build/index.js",
+    "start": "concurrently npm:start:*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,8 +14,11 @@
   "license": "ISC",
   "dependencies": {
     "@ethersproject/bignumber": "^5.7.0",
+    "concurrently": "^7.4.0",
     "dotenv": "^16.0.2",
     "ethers": "^5.7.1",
+    "express": "^4.18.1",
+    "express-ws": "^5.0.2",
     "fs": "^0.0.1-security",
     "typescript": "^4.8.3",
     "web3": "^1.8.0"

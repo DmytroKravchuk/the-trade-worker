@@ -3,9 +3,9 @@ require('dotenv').config();
 const WEB3 = require("web3")
 const bigNumber = require("@ethersproject/bignumber")
 const { ethers } = require("ethers");
-const CONTROLLER = require("./abi/Controller.json")
-const tokenUSDT = require("./abi/TokenUSDT.json")
-const tokenPP = require("./abi/TokenPP.json")
+import CONTROLLER from "./abi/Controller.json"
+import tokenUSDT from "./abi/TokenUSDT.json"
+import tokenPP from "./abi/TokenPP.json"
 
 const TOKEN =  process.env.TOKEN
 const CONTROLLER_ADDRESS = process.env.CONTROLLER
@@ -13,7 +13,7 @@ const ADDRESS_OWNER = process.env.ADDRESS_OWNER
 const TOKEN_PP_ADDRESS = process.env.CONTRACT_ADR_TOKEN_PP
 const TOKEN_USDT_ADDRESS = process.env.CONTRACT_ADR_TOKEN_USDT
 
-const listener = () => {
+const Listener = () => {
     const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
     const signer = provider.getSigner()
     const getContract = async () => {
@@ -28,8 +28,11 @@ const listener = () => {
         }
     }
 
-    const {contractController, contractPP, contractUSDT } = getContract()
-    console.log(getContract().then(data => console.log(data)))
+    const data = getContract().then(d => console.log(d))
+
+    // data.contractUSDT.on("Transfer",(to: any ,amount: any, from: any)=>{
+    //     console.log(to, amount, from);
+    // })
 }
 
-module.exports = listener;
+module.exports = Listener;
