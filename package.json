@@ -13,6 +13,7 @@
   "dependencies": {
     "@ethersproject/bignumber": "^5.7.0",
     "dotenv": "^16.0.2",
+    "ethers": "^5.7.1",
     "fs": "^0.0.1-security",
     "typescript": "^4.8.3",
     "web3": "^1.8.0"
