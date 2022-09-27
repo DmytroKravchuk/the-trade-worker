@@ -45,7 +45,7 @@ const Listener = ({ gasPrice }) => __awaiter(void 0, void 0, void 0, function* (
             data: encodedTransactionPP
         };
         ///////////////
-        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS, 10 * (10 ** 18));
+        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS, BigNumber("10000000000000000000"));
         const encodedApprov = approveTT.encodeABI();
         const approvetx = {
             from: signer.address,
@@ -55,15 +55,26 @@ const Listener = ({ gasPrice }) => __awaiter(void 0, void 0, void 0, function* (
         };
         ///////////////////////
         const executionOrderFee = "3000000000000000";
-        const createOrder = contractController.methods.createOrder(3000, contractUSDT.address, contractPP.address, 0, -276420, 0, 10 * (10 ** 18), "10066188345021311699", 0, "20000000000000");
+        const createOrder = contractController.methods.createOrder({
+            fee: 3000,
+            token0: contractUSDT.options.address,
+            token1: contractPP.options.address,
+            tickLower: 0,
+            tickUpper: BigNumber(-276420),
+            amountOfToken0: 0,
+            recievedAmountOfToken0: BigNumber("10000000000000000000"),
+            recievedAmountOfToken1: BigNumber("10066188345021311699"),
+            deadline: BigNumber("20000000000000"),
+            orderType: 0
+        });
         const encodedCreatedOrder = createOrder.encodeABI();
-        const createorderTx = {
-            from: signer.address,
-            to: contractPP.address,
-            value: executionOrderFee,
-            gas: 2000000,
-            data: encodedCreatedOrder
-        };
+        // const createorderTx = {
+        //     from:signer.address,
+        //     to:contractPP.address,
+        //     value:executionOrderFee,// если функции в контракта payable  то этот параметр нужно указывать
+        //     gas:2000000,
+        //     data:encodedCreatedOrder
+        // }
         // provider.eth.accounts.signTransaction(tx, process.env.PRIVATE_KEY).then((signed: any) => {
         //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) =>{
         //         console.log(result.transactionHash)
