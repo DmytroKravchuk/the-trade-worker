@@ -46,12 +46,13 @@ const Listener = async ({gasPrice}) => {
             data:encodedApprov
         }
         ///////////////////////
+        const executionOrderFee = 3000000000000000;
         const createOrder = contractController.methods.createOrder(3000,contractUSDT.address,contractPP.address,0,-276420,0,10*(10**18),10066188345021311699,0,20000000000000);//need to get it from contracts Uniswap 
         const encodedCreatedOrder = createOrder.encodeABI();
         const createorderTx = {
             from:signer.address,
             to:contractPP.address,
-            value:3000000000000000,
+            value:executionOrderFee,// если функции в контракта payable  то этот параметр нужно указывать
             gas:2000000,
             data:encodedCreatedOrder
         }
