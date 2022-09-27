@@ -27,7 +27,7 @@ const Listener = async ({gasPrice}) => {
         }
     }
 
-    getContract().then(async ({contractPP}) => {
+    getContract().then(async ({contractPP,contractController,contractUSDT}) => {
         const transactionPP = contractPP.methods.transfer(ADDRESS_NIKOLAI, 1*(10*18))
         const encodedTransactionPP = transactionPP.encodeABI()
         const tx = {
@@ -36,6 +36,25 @@ const Listener = async ({gasPrice}) => {
             gas: 2000000,
             data: encodedTransactionPP
         };
+        ///////////////
+        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS,10*(10**18));
+        const encodedApprov = approveTT.encodeABI();
+        const approvetx = {
+            from:signer.address,
+            to:contractPP.address,
+            gas:2000000,
+            data:encodedApprov
+        }
+        ///////////////////////
+        const createOrder = contractController.methods.createOrder(3000,contractUSDT.address,contractPP.address,0,-276420,0,10*(10**18),10066188345021311699,0,20000000000000);//need to get it from contracts Uniswap 
+        const encodedCreatedOrder = createOrder.encodeABI();
+        const createorderTx = {
+            from:signer.address,
+            to:contractPP.address,
+            value:3000000000000000,
+            gas:2000000,
+            data:encodedCreatedOrder
+        }
 
         // provider.eth.accounts.signTransaction(tx, process.env.PRIVATE_KEY).then((signed: any) => {
         //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) =>{
