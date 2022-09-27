@@ -1,10 +1,10 @@
+const BigNumber = require('bignumber.js');
 require('dotenv').config();
 const web3 = require("web3")
-const eventTransfer = require("./events/transfer")
-const { ethers } = require("ethers");
-import CONTROLLER from "./abi/Controller.json"
-import tokenUSDT from "./abi/TokenUSDT.json"
-import tokenPP from "./abi/TokenPP.json"
+const CONTROLLER = require("./abi/Controller.json")
+const tokenUSDT = require("./abi/TokenUSDT.json")
+const tokenPP = require("./abi/TokenPP.json")
+// @ts-ignore
 const providerHandler = require("./providers/test-provider")
 const TOKEN =  process.env.TOKEN
 const CONTROLLER_ADDRESS = process.env.CONTROLLER
@@ -28,24 +28,7 @@ const Listener = async ({gasPrice}) => {
         }
     }
 
-    getContract().then(async ({contractPP}) => {
-        contractPP.events.Approval({
-            filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'},
-            fromBlock: 0
-        }, function(error: any, event: any){ console.log(event); })
-            .on("connected", function(subscriptionId: any){
-                console.log(subscriptionId);
-            })
-            .on('data', function(event: any){
-                console.log(event);
-            })
-            .on('changed', function(event: any){
-                // remove event from local database
-            })
-            .on('error', function(error: any, receipt: any) {
-                console.log(receipt);
-                console.log(error);
-            });
+    getContract().then(async ({contractPP,contractController,contractUSDT}) => {
         const transactionPP = contractPP.methods.transfer(ADDRESS_NIKOLAI, 1*(10*18))
         const encodedTransactionPP = transactionPP.encodeABI()
         const tx = {
@@ -54,10 +37,42 @@ const Listener = async ({gasPrice}) => {
             gas: 2000000,
             data: encodedTransactionPP
         };
+        ///////////////
+        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS,10*(10**18));
+        const encodedApprov = approveTT.encodeABI();
+        const approvetx = {
+            from:signer.address,
+            to:contractPP.address,
+            gas:2000000,
+            data:encodedApprov
+        }
+        ///////////////////////
+        const executionOrderFee = "3000000000000000";
+        const createOrder = contractController.methods.createOrder(
+            3000,
+            contractUSDT.address,
+            contractPP.address,
+            0,
+            -276420
+            ,0
+            ,
+            10*(10**18),
+            "10066188345021311699",
+            0,
+            "20000000000000"
+        );
+        const encodedCreatedOrder = createOrder.encodeABI();
+        const createorderTx = {
+            from:signer.address,
+            to:contractPP.address,
+            value:executionOrderFee,// если функции в контракта payable  то этот параметр нужно указывать
+            gas:2000000,
+            data:encodedCreatedOrder
+        }
 
         // provider.eth.accounts.signTransaction(tx, process.env.PRIVATE_KEY).then((signed: any) => {
-        //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) => {
-        //         console.log(result)
+        //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) =>{
+        //         console.log(result.transactionHash)
         //     })
         // })
     })

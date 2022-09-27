@@ -1,5 +1,4 @@
 require('dotenv').config();
-const {ethers} = require("ethers");
 const Web3 = require("web3")
 
 const TestProvider = () => {
