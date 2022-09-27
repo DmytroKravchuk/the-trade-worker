@@ -1,5 +1,6 @@
 require('dotenv').config();
 const web3 = require("web3")
+const eventTransfer = require("./events/transfer")
 const { ethers } = require("ethers");
 import CONTROLLER from "./abi/Controller.json"
 import tokenUSDT from "./abi/TokenUSDT.json"
@@ -28,6 +29,23 @@ const Listener = async ({gasPrice}) => {
     }
 
     getContract().then(async ({contractPP}) => {
+        contractPP.events.Approval({
+            filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'},
+            fromBlock: 0
+        }, function(error: any, event: any){ console.log(event); })
+            .on("connected", function(subscriptionId: any){
+                console.log(subscriptionId);
+            })
+            .on('data', function(event: any){
+                console.log(event);
+            })
+            .on('changed', function(event: any){
+                // remove event from local database
+            })
+            .on('error', function(error: any, receipt: any) {
+                console.log(receipt);
+                console.log(error);
+            });
         const transactionPP = contractPP.methods.transfer(ADDRESS_NIKOLAI, 1*(10*18))
         const encodedTransactionPP = transactionPP.encodeABI()
         const tx = {
@@ -38,8 +56,8 @@ const Listener = async ({gasPrice}) => {
         };
 
         // provider.eth.accounts.signTransaction(tx, process.env.PRIVATE_KEY).then((signed: any) => {
-        //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) =>{
-        //         console.log(result.transactionHash)
+        //     provider.eth.sendSignedTransaction(signed.rawTransaction).then((result: any) => {
+        //         console.log(result)
         //     })
         // })
     })
