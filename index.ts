@@ -3,6 +3,7 @@ const express = require("express");
 
 // @ts-ignore
 const listener = require('./listener')
+const transaction = require('./transactions/transaction')
 
 // const router = require("./router");
 
@@ -24,7 +25,10 @@ const initServer = async () => {
 
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-        listener()
+        // @ts-ignore
+        transaction().then(({gasPrice}) => {
+            listener({gasPrice})
+        })
 
     } catch (e) {
         console.log(e);
