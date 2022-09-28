@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 require('dotenv').config();
 const express = require("express");
 // @ts-ignore
-const listener = require('./listener');
-const transaction = require('./transactions/transaction');
+// const listener = require('./listener')
+const listenerEthers = require('./listener-ethers');
+// const transaction = require('./transactions/transaction')
+const transactionEthers = require('./transactions/transaction-ethers');
 // const router = require("./router");
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -28,8 +30,9 @@ const initServer = () => __awaiter(void 0, void 0, void 0, function* () {
         });
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
         // @ts-ignore
-        transaction().then(({ gasPrice }) => {
-            listener({ gasPrice });
+        transactionEthers().then(({ gasPrice }) => {
+            // listener({gasPrice})
+            listenerEthers({ gasPrice });
         });
     }
     catch (e) {
