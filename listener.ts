@@ -1,4 +1,4 @@
-const BigNumber = require('bignumber.js');
+import { BigNumber } from 'ethers';
 require('dotenv').config();
 const web3 = require("web3")
 const CONTROLLER = require("./abi/Controller.json")
@@ -38,7 +38,7 @@ const Listener = async ({gasPrice}) => {
             data: encodedTransactionPP
         };
         ///////////////
-        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS, BigNumber("10000000000000000000"));
+        const approveTT = contractPP.methods.approve(CONTROLLER_ADDRESS, BigNumber.from("10000000000000000000"));
         const encodedApprov = approveTT.encodeABI();
         const approvetx = {
             from:signer.address,
@@ -48,18 +48,20 @@ const Listener = async ({gasPrice}) => {
         }
         ///////////////////////
         const executionOrderFee = "3000000000000000";
-        const createOrder = contractController.methods.createOrder({
+        const contractParams = {
             fee: 3000,
             token0: contractUSDT.options.address,
             token1: contractPP.options.address,
             tickLower: 0,
-            tickUpper: BigNumber(-276420),
+            tickUpper: -276420,
             amountOfToken0: 0,
-            recievedAmountOfToken0: BigNumber("10000000000000000000"),
-            recievedAmountOfToken1: BigNumber("10066188345021311699"),
-            deadline: BigNumber("20000000000000"),
+            recievedAmountOfToken0: BigNumber.from("10000000000000000000"),
+            recievedAmountOfToken1: BigNumber.from("10066188345021311699"),
+            deadline: BigNumber.from("20000000000000"),
             orderType: 0
-        });
+        }
+        const createOrder = contractController.methods.createOrder(contractParams);
+
         const encodedCreatedOrder = createOrder.encodeABI();
         // const createorderTx = {
         //     from:signer.address,
