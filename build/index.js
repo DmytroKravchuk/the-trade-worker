@@ -12,7 +12,7 @@ require('dotenv').config();
 const express = require("express");
 // @ts-ignore
 // const listener = require('./listener')
-const listenerEthers = require('./listener-ethers');
+const listenerEthers = require('./listeners/listener-ethers');
 // const transaction = require('./transactions/transaction')
 const transactionEthers = require('./transactions/transaction-ethers');
 // const router = require("./router");

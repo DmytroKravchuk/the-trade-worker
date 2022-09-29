@@ -4,16 +4,16 @@ const ethers = require('ethers');
 
 
 const TestProviderEthers = () => {
-    const customHttpProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER);
-    let wallet = new ethers.Wallet(process.env.PRIVATE_KEY, customHttpProvider);
+    const wsProvider  = new ethers.providers.WebSocketProvider(process.env.PROVIDER);
+    let wallet = new ethers.Wallet(process.env.PRIVATE_KEY, wsProvider );
 
-    customHttpProvider.getBlockNumber().then((result: any) => {
+    wsProvider .getBlockNumber().then((result: any) => {
         console.log("Current block number: " + result);
     });
 
     return {
         wallet,
-        provider: customHttpProvider
+        provider: wsProvider
     }
 }
 
