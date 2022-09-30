@@ -42,11 +42,15 @@ const ListenerEthers = async ({ gasPrice }) => {
     const {contractController, contractPP, contractUSDT} = await getContract()
 
     const sendHandler = async ({address2, uint256}: any) => {
-        // await contractController.connect(wallet).executeOrder(uint256, address2)
-        await contractController.connect(wallet).cancelOrder(uint256, address2)
+        await contractController.connect(wallet).executeOrder(uint256, address2).then(() => {
+            console.log('Order Executed')
+        })
+
+        // await contractController.connect(wallet).cancelOrder(uint256, address2)
     }
 
     contractController.on(filter, (address1: any, address2: any, uint256: any, int24: any, int24_2: any, OrderType: any) => {
+        console.log('Order Created')
         sendHandler({address2, uint256})
     })
 }
