@@ -1,34 +1,25 @@
 // @ts-ignore
 import {BigNumber, utils} from "ethers";
-
 const ethers = require('ethers');
 require('dotenv').config();
-const web3 = require("web3")
-const CONTROLLER = require("../abi/Controller.json")
-const tokenUSDT = require("../abi/TokenUSDT.json")
-const tokenPP = require("../abi/TokenPP.json")
+
+const generateCurrentTick = require("../generateCurrentTick")
+import CONTROLLER from "../abi/Controller.json"
+const changeTick = require('../changeTick')
+const approveToken = require('../approveToken')
 // @ts-ignore
 const providerHandler = require("../providers/test-provider-ethers")
-const TOKEN =  process.env.TOKEN
+
 const CONTROLLER_ADDRESS = process.env.CONTROLLER
-const CONTROLLER_ADDRESS_PROXY = process.env.CONTROLLER_PROXY
-const ADDRESS_NIKOLAI = process.env.ADDRESS_NIKOLAI
-const ADDRESS_DIMA = process.env.ADDRESS_DIMA
-const TOKEN_PP_ADDRESS = process.env.CONTRACT_ADR_TOKEN_PP
-const TOKEN_USDT_ADDRESS = process.env.CONTRACT_ADR_TOKEN_USDT
+const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS
 
 // @ts-ignore
 const ListenerEthers = async ({ gasPrice }) => {
     const {wallet, provider} = providerHandler()
     const getContract = async () => {
         const contractController = await new ethers.Contract(CONTROLLER_ADDRESS, CONTROLLER.abi, provider)
-        const contractPP = await new ethers.Contract(TOKEN_PP_ADDRESS, tokenPP.abi, provider)
-        const contractUSDT = await new ethers.Contract(TOKEN_USDT_ADDRESS, tokenUSDT.abi, provider)
-        //
         return {
-            contractController,
-            contractPP,
-            contractUSDT
+            contractController
         }
     }
 
@@ -39,19 +30,53 @@ const ListenerEthers = async ({ gasPrice }) => {
             ),
         ]
     }
-    const {contractController, contractPP, contractUSDT} = await getContract()
+    const {contractController} = await getContract()
 
     const sendHandler = async ({address2, uint256}: any) => {
         await contractController.connect(wallet).executeOrder(uint256, address2).then(() => {
             console.log('Order Executed')
         })
 
-        // await contractController.connect(wallet).cancelOrder(uint256, address2)
+        // await contractController.connect(wallet).cancelOrder(uint256, address2).then(() => {
+        //     console.log('Cancel Order')
+        // })
     }
 
     contractController.on(filter, (address1: any, address2: any, uint256: any, int24: any, int24_2: any, OrderType: any) => {
-        console.log('Order Created')
-        sendHandler({address2, uint256})
+        const amount = BigNumber.from("100000000000000000000000")
+        console.log("int24")
+        console.log(int24)
+        console.log(int24_2)
+        generateCurrentTick({poolAddress: address2, provider}).then(({token0, token1, slot0, poolContract}: any) => {
+            approveToken({
+                address: token0,
+                address2: ROUTER_ADDRESS,
+                provider, wallet,
+                amount: amount
+            }).then(async () => {
+               await approveToken({
+                    address: token1,
+                    address2: ROUTER_ADDRESS,
+                    provider, wallet,
+                    amount: amount
+                })
+                changeTick({
+                    token0,
+                    token1,
+                    amount: amount,
+                    desiredTick: slot0.tick,
+                    provider,
+                    wallet,
+                    poolContract,
+                    int24,
+                    int24_2
+                }).then(() => {
+                   console.log("sendHandler")
+                   sendHandler({address2, uint256})
+                })
+            })
+        })
+
     })
 }
 

@@ -14,3 +14,4 @@ const Approve = (contract, eventName) => __awaiter(void 0, void 0, void 0, funct
     const { signer, provider } = providerHandler();
 });
 module.exports = Approve;
+//# sourceMappingURL=approve.js.map

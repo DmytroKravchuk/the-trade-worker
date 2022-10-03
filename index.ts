@@ -2,11 +2,8 @@ require('dotenv').config();
 const express = require("express");
 
 // @ts-ignore
-// const listener = require('./listener')
 const listenerEthers = require('./listeners/listener-ethers')
-// const transaction = require('./transactions/transaction')
 const transactionEthers = require('./transactions/transaction-ethers')
-// const router = require("./router");
 
 const PORT = process.env.PORT || 8080;
 
@@ -28,7 +25,6 @@ const initServer = async () => {
 
         // @ts-ignore
         transactionEthers().then(({gasPrice}) => {
-            // listener({gasPrice})
             listenerEthers({gasPrice})
         })
 

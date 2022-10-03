@@ -14,3 +14,4 @@ const Transfer = (contract, eventName) => __awaiter(void 0, void 0, void 0, func
     const { signer, provider } = providerHandler();
 });
 module.exports = Transfer;
+//# sourceMappingURL=transfer.js.map
