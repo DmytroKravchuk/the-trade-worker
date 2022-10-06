@@ -12,7 +12,8 @@ const approveToken = async ({address, address2, provider, wallet, amount}: any) 
             console.log(`Approve to ${address2} with ${amount}`)
             return data;
         })
-        await approveTx.wait()
+        return approveTx
+        
     }
     console.log(`Allowance ${allowance}`)
 }

@@ -59,8 +59,16 @@ const changeTick = async ({
         }
         const amountToSwap: BigNumber = tokenStepToSwap;
         console.log('approveToken')
-        await approveToken({address: token1, address2: ROUTER_ADDRESS, provider, wallet, amount: amountToSwap});
-
+        const trx = await approveToken({address: token1, address2: ROUTER_ADDRESS, provider, wallet, amount: amountToSwap});
+        trx.wait();
+        console.log(trx);
+        const trx1 = await approveToken({address: token1, address2: ROUTER_ADDRESS, provider, wallet, amount: amountToSwap});
+        trx1.wait();
+        console.log(trx1);
+        const trx2 = await approveToken({address: token1, address2: ROUTER_ADDRESS, provider, wallet, amount: amountToSwap});
+        trx2.wait();
+        console.log(trx2);
+        
         console.log('swap')
         const swap = await swapFunc({
             contractController,
